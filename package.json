@@ -39,11 +39,9 @@
     "dev": "nuxi dev playground",
     "dev:build": "nuxi build playground",
     "dev:prepare": "nuxt-module-build --stub && nuxi prepare playground",
-    "docs": "pnpm -C docs run dev",
-    "docs:build": "pnpm -C docs run build",
-    "docs:serve": "pnpm -C docs run serve",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
+    "test:types": "tsc --noEmit",
     "release": "bumpp --commit --push --tag",
     "prepare": "nuxi prepare playground"
   },
