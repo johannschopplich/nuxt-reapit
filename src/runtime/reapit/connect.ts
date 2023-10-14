@@ -1,13 +1,14 @@
 // Forked from https://github.com/reapit/foundations/blob/master/packages/connect-session/src/server/index.ts,
 // because isomorphic fetch upstream will break usage in Nuxt.
 // Changes made:
-// - Replaced Axios with ofetch
-// - Use unjwt instead of jwt-decode
-// - Removed isomorphic-fetch, which was used in a utility function
+// - Replaced `axios` with `ofetch`
+// - Replaced `jwt-decode` with `unjwt`
+// - Removed isomorphic-fetch, which was imported in a utility file
+// - Removed `@reapit/connect-session` dependency only for types
 
 import { ofetch } from 'ofetch'
 import { decodeJWT } from 'unjwt'
-import type { CoginitoAccess, ReapitConnectServerSessionInitializers } from '@reapit/connect-session'
+import type { CoginitoAccess, ReapitConnectServerSessionInitializers } from './types'
 
 export class ReapitConnectServerSession {
   // Private cached variables, I don't want users to reference these directly or it will get confusing.
