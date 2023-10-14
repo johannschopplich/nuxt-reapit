@@ -1,4 +1,4 @@
-import { createError, defineEventHandler } from 'h3'
+import { createError, defineEventHandler, readBody } from 'h3'
 import type { FetchError, SearchParameters } from 'ofetch'
 import { ReapitConnectServerSession } from './reapit/connect'
 import { DEFAULT_HEADERS } from './constants'
