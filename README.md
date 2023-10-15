@@ -19,9 +19,9 @@ npm i -D nuxt-reapit
 yarn add -D nuxt-reapit
 ```
 
-## Basic Usage
+## Usage
 
-Add the `nuxt-reapit` module to your `nuxt.config.ts`:
+To get started, add the `nuxt-reapit` module to your `nuxt.config.ts`:
 
 ```ts
 // `nuxt.config.ts`
@@ -60,6 +60,20 @@ export default defineNuxtConfig({
     },
   }
 })
+```
+
+Finally, you can use the `useReapit` composable to fetch data from the Reapit Platform API:
+
+```ts
+// Fetch all properties with images
+const { data } = await useReapit('properties', {
+  query: {
+    embed: 'images',
+    marketingMode: 'selling',
+  },
+})
+
+const properties = computed(() => data.value?._embedded || [])
 ```
 
 ## 💻 Development
