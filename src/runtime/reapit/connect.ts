@@ -25,15 +25,14 @@ export class ReapitConnectServerSession {
   }
 
   private get accessTokenExpired() {
-    if (this.accessToken) {
-      const decoded = decodeJWT<CoginitoAccess & { aud: string }>(this.accessToken)!
-      const expiry = decoded.exp
-      // 5 min to allow for clock drift
-      const fiveMinsFromNow = Math.round(new Date().getTime() / 1000) + 300
-      return expiry ? expiry < fiveMinsFromNow : true
-    }
+    if (!this.accessToken)
+      return true
 
-    return true
+    const decoded = decodeJWT<CoginitoAccess & { aud: string }>(this.accessToken)!
+    const expiry = decoded.exp
+    // 5 min to allow for clock drift
+    const fiveMinsFromNow = Math.round(new Date().getTime() / 1000) + 300
+    return expiry ? expiry < fiveMinsFromNow : true
   }
 
   // See: https://docs.aws.amazon.com/cognito/latest/developerguide/token-endpoint.html
@@ -53,8 +52,8 @@ export class ReapitConnectServerSession {
         },
       )
 
-      if (session.error)
-        throw new Error(session.data.error)
+      if (session?.error)
+        throw new Error(session.error)
 
       if (session?.access_token)
         return session.access_token
