@@ -67,6 +67,7 @@ Finally, you can use the `useReapit` composable to fetch data from the Reapit Pl
 ```ts
 // Fetch all properties with images
 const { data } = await useReapit('properties', {
+  customerId: 'SBOX',
   query: {
     embed: 'images',
     marketingMode: 'selling',
@@ -75,6 +76,9 @@ const { data } = await useReapit('properties', {
 
 const properties = computed(() => data.value?._embedded || [])
 ```
+
+> [!NOTE]
+> Don't forget to set your `customerId`. It becomes available to view after a customer has chosen to install your application.
 
 ## 💻 Development
 

@@ -9,7 +9,11 @@ const { reapit: { connect, platform } } = useRuntimeConfig()
 let reapitConnectSession: ReapitConnectServerSession | undefined
 
 export default defineEventHandler(async (event) => {
-  const { path, query } = await readBody<{ path: string; query?: SearchParameters }>(event)
+  const { path, query, headers } = await readBody<{
+    path: string
+    query?: SearchParameters
+    headers?: Record<string, string>
+  }>(event)
   // const key = decodeURIComponent(getRouterParam(event, 'key')!)
 
   try {
@@ -27,6 +31,7 @@ export default defineEventHandler(async (event) => {
         query,
         headers: {
           ...DEFAULT_HEADERS,
+          ...headers,
           Authorization: `Bearer ${accessToken}`,
         },
       },

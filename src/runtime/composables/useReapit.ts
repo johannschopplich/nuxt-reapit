@@ -12,10 +12,18 @@ type UseReapitOptions<T> = AsyncDataOptions<T> & Pick<
   | 'onResponse'
   | 'onResponseError'
   | 'query'
+  | 'headers'
   | 'retry'
   | 'retryDelay'
   | 'timeout'
 > & {
+  /**
+   * The customer ID to use when making requests.
+   *
+   * @see https://foundations-documentation.reapit.cloud/api/api-documentation#accessing-customer-data
+   * @default 'SBOX'
+   */
+  customerId?: string
   /**
    * Cache the response between function calls for the same path.
    * @default false
@@ -36,6 +44,8 @@ export function useReapit<T = any>(
     watch,
     immediate,
     query,
+    headers,
+    customerId = 'SBOX',
     cache = false,
     ...fetchOptions
   } = opts
@@ -61,7 +71,7 @@ export function useReapit<T = any>(
 
       // Workaround to persist response client-side
       // https://github.com/nuxt/nuxt/issues/15445
-      if ((nuxt!.isHydrating || cache) && key.value in nuxt!.payload.data)
+      if ((nuxt!.isHydrating || cache) && nuxt!.payload.data[key.value])
         return nuxt!.payload.data[key.value]
 
       controller = new AbortController()
@@ -74,6 +84,10 @@ export function useReapit<T = any>(
           body: {
             path,
             query,
+            headers: {
+              ...headersToObject(headers),
+              'reapit-customer': customerId,
+            },
           },
         })) as T
 
@@ -84,12 +98,18 @@ export function useReapit<T = any>(
       }
       catch (error) {
         // Invalidate cache if request fails
-        if (key.value in nuxt!.payload.data)
-          delete nuxt!.payload.data[key.value]
+        nuxt!.payload.data[key.value] = undefined
 
         throw error
       }
     },
     asyncDataOptions,
   ) as AsyncData<T, FetchError>
+}
+
+function headersToObject(headers: HeadersInit = {}): Record<string, string> {
+  if (headers instanceof Headers || Array.isArray(headers))
+    return Object.fromEntries(headers)
+
+  return headers
 }
