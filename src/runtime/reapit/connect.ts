@@ -1,12 +1,11 @@
 // Forked from https://github.com/reapit/foundations/blob/master/packages/connect-session/src/server/index.ts,
 // because isomorphic fetch upstream will break usage in Nuxt.
 // Changes made:
-// - Replaced `axios` with `ofetch`
+// - Replaced `axios` with `$fetch`
 // - Replaced `jwt-decode` with `unjwt`
 // - Removed isomorphic-fetch, which was imported in a utility file
 // - Removed `@reapit/connect-session` dependency only for types
 
-import { ofetch } from 'ofetch'
 import { decodeJWT } from 'unjwt'
 import type { CoginitoAccess, ReapitConnectServerSessionInitializers } from './types'
 
@@ -40,17 +39,18 @@ export class ReapitConnectServerSession {
     try {
       // eslint-disable-next-line node/prefer-global/buffer
       const base64Encoded = Buffer.from(`${this.connectClientId}:${this.connectClientSecret}`).toString('base64')
-      const session = await ofetch(
-        `token?grant_type=client_credentials&client_id=${this.connectClientId}`,
-        {
-          baseURL: this.connectOAuthUrl,
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Authorization': `Basic ${base64Encoded}`,
-          },
+      const session = await globalThis.$fetch<any>('token', {
+        baseURL: this.connectOAuthUrl,
+        query: {
+          grant_type: 'client_credentials',
+          client_id: this.connectClientId,
         },
-      )
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Authorization': `Basic ${base64Encoded}`,
+        },
+      })
 
       if (session?.error)
         throw new Error(session.error)
